@@ -14,8 +14,6 @@ class Connection {
   constructor(io, socket) {
     this.socket = socket;
     this.io = io;
-    console.log("connected : ",users)
-    socket.on('getMessages', () => this.getMessages());
     socket.on('message', (value) => this.handleMessage(value));
     socket.on('disconnect', () => this.disconnect());
     socket.on('connect_error', (err) => {
@@ -42,25 +40,18 @@ class Connection {
     messages.add(message);
     this.sendMessage(message);
 
-    setTimeout(
-      () => {
-        messages.delete(message);
-        this.io.sockets.emit('deleteMessage', message.id);
-      },
-      messageExpirationTimeMS,
-    );
   }
 
   disconnect() {
     console.log("deleted : ",users)
     users.delete(this.socket);
-  
   }
 }
 
 module.exports = {
     chat : (io) => {
   io.on('connection', (socket) => {
+    console.log("client xonnected : ",socket.id);
     new Connection(io, socket);   
   });
 }};
